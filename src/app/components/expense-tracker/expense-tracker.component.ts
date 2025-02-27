@@ -31,7 +31,6 @@ import { ToolbarModule } from 'primeng/toolbar';
   ],
   templateUrl: './expense-tracker.component.html'
 })
-
 export class ExpenseTrackerComponent implements OnInit {
   // Forms for each section
   monthlyForm: FormGroup;
@@ -223,5 +222,17 @@ export class ExpenseTrackerComponent implements OnInit {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  calculateMonthlyTotal(): number {
+    return this.monthlyExpenses.reduce((sum, item) => sum + item.amount, 0);
+  }
+
+  calculateCategoryTotal(): number {
+    return this.categoryExpenses.reduce((sum, item) => sum + item.amount, 0);
+  }
+
+  calculateCustomTotal(): number {
+    return this.customResults.reduce((sum, item) => sum + item.amount, 0);
   }
 }
