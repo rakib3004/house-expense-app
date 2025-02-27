@@ -1,0 +1,236 @@
+<p-tabView>
+  <!-- Monthly Expenses Section -->
+  <p-tabPanel header="Monthly Expenses">
+    <div class="p-3">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h2 class="text-xl mb-0">Monthly Expense Report</h2>
+        </ng-template>
+
+        <form [formGroup]="monthlyForm" class="p-fluid grid formgrid">
+          <div class="field col-12 md:col-5">
+            <label for="month">Month</label>
+            <p-dropdown [options]="[
+              {label: 'January', value: 1},
+              {label: 'February', value: 2},
+              {label: 'March', value: 3},
+              {label: 'April', value: 4},
+              {label: 'May', value: 5},
+              {label: 'June', value: 6},
+              {label: 'July', value: 7},
+              {label: 'August', value: 8},
+              {label: 'September', value: 9},
+              {label: 'October', value: 10},
+              {label: 'November', value: 11},
+              {label: 'December', value: 12}
+            ]" formControlName="month" placeholder="Select Month" inputId="month"></p-dropdown>
+          </div>
+          
+          <div class="field col-12 md:col-5">
+            <label for="year">Year</label>
+            <p-dropdown [options]="[
+              {label: '2022', value: 2022},
+              {label: '2023', value: 2023},
+              {label: '2024', value: 2024},
+              {label: '2025', value: 2025}
+            ]" formControlName="year" placeholder="Select Year" inputId="year"></p-dropdown>
+          </div>
+          
+          <div class="field col-12 md:col-2 flex align-items-end">
+            <button pButton type="button" label="Search" icon="pi pi-search" 
+                    (click)="getMonthlyExpenses()" [loading]="loadingMonthly"></button>
+          </div>
+        </form>
+
+        <div class="mt-4" *ngIf="monthlyExpenses.length > 0">
+          <p-toolbar>
+            <ng-template pTemplate="left">
+              <h3>Monthly Expense Results</h3>
+            </ng-template>
+            <ng-template pTemplate="right">
+              <button pButton type="button" label="Export to Excel" 
+                      icon="pi pi-file-excel" class="p-button-success" 
+                      (click)="exportToExcel(monthlyExpenses, 'monthly_expenses')"></button>
+            </ng-template>
+          </p-toolbar>
+          
+          <p-table [value]="monthlyExpenses" [columns]="monthlyColumns" [paginator]="true" 
+                  [rows]="10" [responsive]="true" styleClass="p-datatable-sm p-datatable-gridlines mt-2">
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let col of monthlyColumns">{{col.header}}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-expense>
+              <tr>
+                <td *ngFor="let col of monthlyColumns">
+                  <span *ngIf="col.field !== 'amount'">{{expense[col.field]}}</span>
+                  <span *ngIf="col.field === 'amount'">${{expense[col.field].toFixed(2)}}</span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex justify-content-end">
+                <span><strong>Total:</strong> ${{monthlyExpenses.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}}</span>
+              </div>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-card>
+    </div>
+  </p-tabPanel>
+
+  <!-- Category Expenses Section -->
+  <p-tabPanel header="Category Expenses">
+    <div class="p-3">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h2 class="text-xl mb-0">Category Expense Report</h2>
+        </ng-template>
+
+        <form [formGroup]="categoryForm" class="p-fluid grid formgrid">
+          <div class="field col-12 md:col-4">
+            <label for="category">Category</label>
+            <p-dropdown [options]="categories" formControlName="category" 
+                      optionLabel="name" placeholder="Select Category" inputId="category"></p-dropdown>
+          </div>
+          
+          <div class="field col-12 md:col-3">
+            <label for="startDate">Start Date</label>
+            <p-calendar formControlName="startDate" [showIcon]="true" inputId="startDate"
+                      dateFormat="yy-mm-dd" placeholder="YYYY-MM-DD"></p-calendar>
+          </div>
+          
+          <div class="field col-12 md:col-3">
+            <label for="endDate">End Date</label>
+            <p-calendar formControlName="endDate" [showIcon]="true" inputId="endDate"
+                      dateFormat="yy-mm-dd" placeholder="YYYY-MM-DD"></p-calendar>
+          </div>
+          
+          <div class="field col-12 md:col-2 flex align-items-end">
+            <button pButton type="button" label="Search" icon="pi pi-search" 
+                    (click)="getCategoryExpenses()" [loading]="loadingCategory"></button>
+          </div>
+        </form>
+
+        <div class="mt-4" *ngIf="categoryExpenses.length > 0">
+          <p-toolbar>
+            <ng-template pTemplate="left">
+              <h3>Category Expense Results</h3>
+            </ng-template>
+            <ng-template pTemplate="right">
+              <button pButton type="button" label="Export to Excel" 
+                      icon="pi pi-file-excel" class="p-button-success" 
+                      (click)="exportToExcel(categoryExpenses, 'category_expenses')"></button>
+            </ng-template>
+          </p-toolbar>
+          
+          <p-table [value]="categoryExpenses" [columns]="categoryColumns" [paginator]="true" 
+                  [rows]="10" [responsive]="true" styleClass="p-datatable-sm p-datatable-gridlines mt-2">
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let col of categoryColumns">{{col.header}}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-expense>
+              <tr>
+                <td *ngFor="let col of categoryColumns">
+                  <span *ngIf="col.field !== 'amount'">{{expense[col.field]}}</span>
+                  <span *ngIf="col.field === 'amount'">${{expense[col.field].toFixed(2)}}</span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex justify-content-end">
+                <span><strong>Total:</strong> ${{categoryExpenses.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}}</span>
+              </div>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-card>
+    </div>
+  </p-tabPanel>
+
+  <!-- Custom Query Section -->
+  <p-tabPanel header="Custom Query">
+    <div class="p-3">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h2 class="text-xl mb-0">Custom Expense Report</h2>
+        </ng-template>
+
+        <form [formGroup]="customForm" class="p-fluid grid formgrid">
+          <div class="field col-12 md:col-3">
+            <label for="minAmount">Min Amount</label>
+            <div class="p-inputgroup">
+              <span class="p-inputgroup-addon">$</span>
+              <input type="number" pInputText formControlName="minAmount" 
+                   placeholder="0.00" inputId="minAmount" min="0" step="0.01">
+            </div>
+          </div>
+          
+          <div class="field col-12 md:col-3">
+            <label for="maxAmount">Max Amount</label>
+            <div class="p-inputgroup">
+              <span class="p-inputgroup-addon">$</span>
+              <input type="number" pInputText formControlName="maxAmount" 
+                   placeholder="1000.00" inputId="maxAmount" min="0" step="0.01">
+            </div>
+          </div>
+          
+          <div class="field col-12 md:col-2">
+            <label for="startDate">Start Date</label>
+            <p-calendar formControlName="startDate" [showIcon]="true" inputId="customStartDate"
+                      dateFormat="yy-mm-dd" placeholder="YYYY-MM-DD"></p-calendar>
+          </div>
+          
+          <div class="field col-12 md:col-2">
+            <label for="endDate">End Date</label>
+            <p-calendar formControlName="endDate" [showIcon]="true" inputId="customEndDate"
+                      dateFormat="yy-mm-dd" placeholder="YYYY-MM-DD"></p-calendar>
+          </div>
+          
+          <div class="field col-12 md:col-2 flex align-items-end">
+            <button pButton type="button" label="Search" icon="pi pi-search" 
+                    (click)="getCustomExpenses()" [loading]="loadingCustom"></button>
+          </div>
+        </form>
+
+        <div class="mt-4" *ngIf="customResults.length > 0">
+          <p-toolbar>
+            <ng-template pTemplate="left">
+              <h3>Custom Query Results</h3>
+            </ng-template>
+            <ng-template pTemplate="right">
+              <button pButton type="button" label="Export to Excel" 
+                      icon="pi pi-file-excel" class="p-button-success" 
+                      (click)="exportToExcel(customResults, 'custom_expense_report')"></button>
+            </ng-template>
+          </p-toolbar>
+          
+          <p-table [value]="customResults" [columns]="customColumns" [paginator]="true" 
+                  [rows]="10" [responsive]="true" styleClass="p-datatable-sm p-datatable-gridlines mt-2">
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let col of customColumns">{{col.header}}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-expense>
+              <tr>
+                <td *ngFor="let col of customColumns">
+                  <span *ngIf="col.field !== 'amount'">{{expense[col.field]}}</span>
+                  <span *ngIf="col.field === 'amount'">${{expense[col.field].toFixed(2)}}</span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex justify-content-end">
+                <span><strong>Total:</strong> ${{customResults.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}}</span>
+              </div>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-card>
+    </div>
+  </p-tabPanel>
+</p-tabView>
