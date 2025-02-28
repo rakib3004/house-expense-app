@@ -64,14 +64,13 @@
               <ng-template pTemplate="body" let-expense>
                 <tr>
                   <td *ngFor="let col of monthlyColumns">
-                    <span *ngIf="col.field !== 'amount'">{{expense[col.field]}}</span>
-                    <span *ngIf="col.field === 'amount'">${{expense[col.field].toFixed(2)}}</span>
+                    <span>{{expense[col.field]}}</span>
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="summary">
                 <div class="flex justify-content-end">
-                  <span><strong>Total:</strong> ${{ calculateMonthlyTotal().toFixed(2) }}</span>
+                  <span><strong>Total:</strong> {{ calculateMonthlyTotal()}}</span>
                 </div>
               </ng-template>
             </p-table>
@@ -135,14 +134,13 @@
               <ng-template pTemplate="body" let-expense>
                 <tr>
                   <td *ngFor="let col of categoryColumns">
-                    <span *ngIf="col.field !== 'amount'">{{expense[col.field]}}</span>
-                    <span *ngIf="col.field === 'amount'">${{expense[col.field].toFixed(2)}}</span>
+                    <span>{{expense[col.field]}}</span>
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="summary">
                 <div class="flex justify-content-end">
-                  <span><strong>Total:</strong> ${{ calculateCategoryTotal().toFixed(2) }}</span>
+                  <span><strong>Total:</strong> {{ calculateCategoryTotal() }}</span>
                 </div>
               </ng-template>
             </p-table>
@@ -218,14 +216,13 @@
               <ng-template pTemplate="body" let-expense>
                 <tr>
                   <td *ngFor="let col of customColumns">
-                    <span *ngIf="col.field !== 'amount'">{{expense[col.field]}}</span>
-                    <span *ngIf="col.field === 'amount'">${{expense[col.field].toFixed(2)}}</span>
+                    <span>{{expense[col.field]}}</span>
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="summary">
                 <div class="flex justify-content-end">
-                  <span><strong>Total:</strong> ${{ calculateCustomTotal().toFixed(2) }}</span>
+                  <span><strong>Total:</strong>{{ calculateCustomTotal()}}</span>
                 </div>
               </ng-template>
             </p-table>

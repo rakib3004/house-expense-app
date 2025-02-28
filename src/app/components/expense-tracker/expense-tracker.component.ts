@@ -49,13 +49,13 @@ export class ExpenseTrackerComponent implements OnInit {
 
   // Categories dropdown
   categories: any[] = [
-    { name: 'Groceries', code: 'GROC' },
-    { name: 'Utilities', code: 'UTIL' },
-    { name: 'Rent/Mortgage', code: 'HOME' },
-    { name: 'Transportation', code: 'TRAN' },
-    { name: 'Entertainment', code: 'ENT' },
-    { name: 'Medical', code: 'MED' },
-    { name: 'Other', code: 'OTHER' }
+    { name: 'Food & Groceries', code: 'FOOD' },
+    { name: 'Transportation', code: 'TRANSPORT' },
+    { name: 'Utilities', code: 'UTILITIES' },
+    { name: 'Entertainment', code: 'ENTERTAINMENT' },
+    { name: 'Health & Fitness', code: 'HEALTH' },
+    { name: 'Shopping', code: 'SHOPPING' },
+    { name: 'Other Expenses', code: 'OTHER' }
   ];
 
   // Columns for display
@@ -225,14 +225,23 @@ export class ExpenseTrackerComponent implements OnInit {
   }
 
   calculateMonthlyTotal(): number {
-    return this.monthlyExpenses.reduce((sum, item) => sum + item.amount, 0);
+    return this.monthlyExpenses.reduce((sum, item) => {
+      const amount = parseFloat(item.amount); // Convert string to number
+      return sum + (isNaN(amount) ? 0 : amount); // Handle invalid numbers
+    }, 0);
   }
 
   calculateCategoryTotal(): number {
-    return this.categoryExpenses.reduce((sum, item) => sum + item.amount, 0);
+    return this.categoryExpenses.reduce((sum, item) => {
+      const amount = parseFloat(item.amount); // Convert string to number
+      return sum + (isNaN(amount) ? 0 : amount); // Handle invalid numbers
+    }, 0);
   }
 
   calculateCustomTotal(): number {
-    return this.customResults.reduce((sum, item) => sum + item.amount, 0);
+    return this.customResults.reduce((sum, item) => {
+      const amount = parseFloat(item.amount); // Convert string to number
+      return sum + (isNaN(amount) ? 0 : amount); // Handle invalid numbers
+    }, 0);
   }
 }
