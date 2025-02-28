@@ -4,14 +4,17 @@ FROM node:${NODE_VERSION}-alpine AS base
 
 WORKDIR /usr/src/app
 
+# Stage 1: Install dependencies
 FROM base AS deps
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
+    npm install -g @angular/cli && \
     npm ci --omit=dev
 
 FROM base AS build
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
+    npm install -g @angular/cli && \
     npm ci
 COPY . .
 RUN npm run build
@@ -24,6 +27,8 @@ USER node
 COPY package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
+
+RUN npm install -g @angular/cli
 
 EXPOSE 4200
 
