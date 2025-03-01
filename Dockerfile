@@ -17,6 +17,7 @@ RUN --mount=type=cache,target=/root/.npm \
     npm install -g @angular/cli && \
     npm ci
 COPY . .
+RUN npm install -g @angular/cli
 RUN npm run build
 
 FROM base AS production
@@ -27,9 +28,6 @@ USER node
 COPY package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
-
-RUN npm install -g @angular/cli
-
 EXPOSE 4200
 
 CMD ["npm", "start"]
